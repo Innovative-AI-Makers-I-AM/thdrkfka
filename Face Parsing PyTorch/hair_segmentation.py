@@ -53,4 +53,4 @@ def hair_segmentation(image_path):
     print('Result saved as result.jpg')
 
 if __name__ == '__main__':
-    hair_segmentation('image/image3.png')
+    hair_segmentation('image/image2.png')
