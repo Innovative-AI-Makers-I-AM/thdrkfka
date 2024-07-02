@@ -8,15 +8,15 @@ import torch.utils.model_zoo as modelzoo
 
 # from modules.bn import InPlaceABNSync as BatchNorm2d
 
-resnet18_url = 'https://download.pytorch.org/models/resnet18-5c106cde.pth'
+resnet18_url = 'resnet18-5c106cde.pth'
 
-
+# conv3x3 : 3x3 합성곱 층 생성 함수
 def conv3x3(in_planes, out_planes, stride=1):
     """3x3 convolution with padding"""
     return nn.Conv2d(in_planes, out_planes, kernel_size=3, stride=stride,
                      padding=1, bias=False)
 
-
+# BasicBlock : ResNet의 기본 블록 정의하는 클래스
 class BasicBlock(nn.Module):
     def __init__(self, in_chan, out_chan, stride=1):
         super(BasicBlock, self).__init__()
@@ -47,14 +47,15 @@ class BasicBlock(nn.Module):
         out = self.relu(out)
         return out
 
-
+# 여러 개의 Basic Block 을 쌓아 하나의 레이어 생성하는 함수
 def create_layer_basic(in_chan, out_chan, bnum, stride=1):
     layers = [BasicBlock(in_chan, out_chan, stride=stride)]
     for i in range(bnum-1):
         layers.append(BasicBlock(out_chan, out_chan, stride=1))
     return nn.Sequential(*layers)
 
-
+# ResNet 18 클래스
+# ResNet-18 모델 정의한 클래스 / 기본적인 구조 설정, 미리 학습된 가중치 불러옴(여기서는 헤어 관련 가중치)
 class Resnet18(nn.Module):
     def __init__(self):
         super(Resnet18, self).__init__()
@@ -74,9 +75,9 @@ class Resnet18(nn.Module):
         x = self.maxpool(x)
 
         x = self.layer1(x)
-        feat8 = self.layer2(x) # 1/8
-        feat16 = self.layer3(feat8) # 1/16
-        feat32 = self.layer4(feat16) # 1/32
+        feat8 = self.layer2(x) # 1/8 크기 특징 맵
+        feat16 = self.layer3(feat8) # 1/16 크기 특징 맵
+        feat32 = self.layer4(feat16) # 1/32 크기 특징 맵
         return feat8, feat16, feat32
 
     def init_weight(self):

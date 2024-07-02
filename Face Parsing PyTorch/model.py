@@ -10,7 +10,7 @@ import torchvision
 from resnet import Resnet18
 # from modules.bn import InPlaceABNSync as BatchNorm2d
 
-
+# ConvBNReLU: 합성곱, 배치 정규화, ReLU 활성화 함수로 구성된 블록
 class ConvBNReLU(nn.Module):
     def __init__(self, in_chan, out_chan, ks=3, stride=1, padding=1, *args, **kwargs):
         super(ConvBNReLU, self).__init__()
@@ -34,6 +34,7 @@ class ConvBNReLU(nn.Module):
                 nn.init.kaiming_normal_(ly.weight, a=1)
                 if not ly.bias is None: nn.init.constant_(ly.bias, 0)
 
+# BiseNetOutput : 출력 블록 정의
 class BiSeNetOutput(nn.Module):
     def __init__(self, in_chan, mid_chan, n_classes, *args, **kwargs):
         super(BiSeNetOutput, self).__init__()
@@ -63,7 +64,7 @@ class BiSeNetOutput(nn.Module):
                 nowd_params += list(module.parameters())
         return wd_params, nowd_params
 
-
+# AttentionRefinementModule : 입력 특징 맵을 주목하여 중요한 부분 강조하느 모듈
 class AttentionRefinementModule(nn.Module):
     def __init__(self, in_chan, out_chan, *args, **kwargs):
         super(AttentionRefinementModule, self).__init__()
@@ -88,7 +89,7 @@ class AttentionRefinementModule(nn.Module):
                 nn.init.kaiming_normal_(ly.weight, a=1)
                 if not ly.bias is None: nn.init.constant_(ly.bias, 0)
 
-
+# ContextPath : ResNet-18을 기반으로 한 컨텍스트 경로 정의
 class ContextPath(nn.Module):
     def __init__(self, *args, **kwargs):
         super(ContextPath, self).__init__()
@@ -176,7 +177,7 @@ class SpatialPath(nn.Module):
                 nowd_params += list(module.parameters())
         return wd_params, nowd_params
 
-
+# FeatureFusionModule : 전체 BiseNet 모델 정의
 class FeatureFusionModule(nn.Module):
     def __init__(self, in_chan, out_chan, *args, **kwargs):
         super(FeatureFusionModule, self).__init__()
